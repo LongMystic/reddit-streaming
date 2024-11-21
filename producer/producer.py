@@ -6,6 +6,8 @@ import configparser
 import praw
 import threading
 
+from typing import List, Dict
+
 threads = []
 top_subreddit_list = ['AskReddit', 'funny', 'gaming', 'aww', 'worldnews']
 countries_subreddit_list = ['VietNam', 'usa', 'unitedkingdom', 'australia', 'russia', 'China']
@@ -13,7 +15,7 @@ countries_subreddit_list = ['VietNam', 'usa', 'unitedkingdom', 'australia', 'rus
 
 class RedditProducer:
 
-    def __init__(self, subreddit_list: list[str], cred_file: str = "../secrets/credentials.cfg"):
+    def __init__(self, subreddit_list: List[str], cred_file: str = "../secrets/credentials.cfg"):
 
         self.subreddit_list = subreddit_list
         self.reddit = self.__get_reddit_client__(cred_file)
@@ -52,7 +54,7 @@ class RedditProducer:
         comment: praw.models.Comment
         for comment in subreddit.stream.comments(skip_existing=True):
             try:
-                comment_json: dict[str, str] = {
+                comment_json: Dict[str, str] = {
                     "id": comment.id,
                     "name": comment.name,
                     "author": comment.author.name,
