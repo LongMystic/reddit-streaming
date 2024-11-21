@@ -63,9 +63,11 @@ services:
       - "7077:7077"
     volumes:
       - ./spark:/opt/spark/data
+      - ./jars:/opt/spark/jars
     networks:
       - reddit-streaming
   spark-worker:
+    container_name: spark-worker
     image: bitnami/spark:latest
     command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     depends_on:
@@ -77,23 +79,9 @@ services:
       SPARK_MASTER_URL: spark://spark-master:7077
     volumes:
       - ./spark:/opt/spark/data
+      - ./jars:/opt/spark/jars
     networks:
       - reddit-streaming
-
-  spark-job:
-    image: bitnami/spark:latest
-    depends_on:
-      - spark-master
-#    environment:
-#      SPARK_MODE: worker
-#      SPARK_WORKER_CORES: 2
-#      SPARK_WORKER_MEMORY: 1g
-#      SPARK_MASTER_URL: spark://spark-master:7077
-    volumes:
-      - ./spark:/opt/spark/data
-    networks:
-      - reddit-streaming
-    command: "./bin/spark-submit --master spark://spark-master:7077 --deploy-mode client --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,com.datastax.spark:spark-cassandra-connector_2.12:3.5.1 /opt/spark/data/spark_streaming.py"
 
   cassandra_db:
     image: cassandra:latest
