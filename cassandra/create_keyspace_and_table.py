@@ -11,7 +11,8 @@ def create_keyspace(session):
 
 
 def create_table(session):
-    session.execute("DROP TABLE IF EXISTS spark_streams.created_users;")
+    session.execute("DROP TABLE IF EXISTS reddit.comments;")
+    session.execute("DROP TABLE IF EXISTS reddit.subreddit_sentiment_avg;")
 
     # should create table so that can generate primary key
     session.execute("""
@@ -28,13 +29,28 @@ def create_table(session):
             permalink text,
             api_timestamp timestamp,
             ingest_timestamp timestamp,
+            sentiment_score float,
             PRIMARY KEY((subreddit), api_timestamp)
         )
         WITH CLUSTERING ORDER BY (api_timestamp DESC);
     """)
 
     session.execute("""
+        CREATE TABLE IF NOT EXISTS reddit.subreddit_sentiment_avg(
+            uuid uuid,
+            subreddit text,
+            sentiment_score_avg double,
+            ingest_timestamp timestamp,
+            PRIMARY KEY((subreddit),ingest_timestamp))
+        WITH CLUSTERING ORDER BY (ingest_timestamp DESC);
+    """)
+
+    session.execute("""
         CREATE INDEX IF NOT EXISTS ON reddit.comments (uuid);
+    """)
+
+    session.execute("""
+        CREATE INDEX IF NOT EXISTS ON reddit.subreddit_sentiment_avg (uuid);
     """)
 
     print("Table created successfully!")
