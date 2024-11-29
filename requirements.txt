@@ -1,4 +1,4 @@
 praw
 kafka-python
 cassandra-driver
-ntlk
+nltk
