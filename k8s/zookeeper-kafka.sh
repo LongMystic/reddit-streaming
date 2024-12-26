@@ -1,0 +1,27 @@
+helm install kafka bitnami/kafka \
+    --set broker.replicaCount=3 \
+    --set externalAccess.enabled=true \
+    --set externalAccess.broker.service.type=NodePort \
+    --set externalAccess.broker.service.ports.external=9094 \
+    --set externalAccess.autoDiscovery.enabled=true \
+    --set serviceAccount.create=true \
+    --set rbac.create=true \
+    --set listeners.client.protocol=PLAINTEXT \
+    --set controller.replicaCount=0 \
+    --set broker.automountServiceAccountToken=true \
+    --set broker.persistence.size=256Mi \
+    --set broker.resources.requests.cpu=200m \
+    --set broker.resources.requests.memory=256Mi \
+    --set broker.resources.limits.cpu=500m \
+    --set broker.resources.limits.memory=512Mi \
+    --set heapOpts="-Xmx256m -Xms256m" \
+    --set zookeeper.enabled=true \
+    --set kraft.enabled=false \
+    --set zookeeper.replicaCount=1 \
+    --set zookeeper.persistence.enabled=true \
+    --set zookeeper.persistence.size=256Mi \
+    --set zookeeper.resources.requests.cpu=200m \
+    --set zookeeper.resources.requests.memory=256Mi \
+    --set zookeeper.resources.limits.cpu=500m \
+    --set zookeeper.resources.limits.memory=512Mi \
+    --set zookeeper.heapSize=256

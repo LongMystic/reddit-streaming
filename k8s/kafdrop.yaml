@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafdrop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafdrop
+  template:
+    metadata:
+      labels:
+        app: kafdrop
+    spec:
+      containers:
+      - name: kafdrop
+        image: obsidiandynamics/kafdrop:latest
+        env:
+        - name: KAFKA_BROKERCONNECT
+          # Sử dụng DNS name từ trong cluster theo hướng dẫn
+          value: "kafka.default.svc.cluster.local:9092"
+        - name: JVM_OPTS
+          value: "-Xms32M -Xmx64M"
+        - name: SERVER_SERVLET_CONTEXTPATH
+          value: "/"
+        ports:
+        - containerPort: 9000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafdrop-service
+spec:
+  type: NodePort
+  selector:
+    app: kafdrop
+  ports:
+  - port: 9000
+    targetPort: 9000
+    nodePort: 30900

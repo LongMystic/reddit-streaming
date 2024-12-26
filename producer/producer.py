@@ -19,9 +19,13 @@ class RedditProducer:
 
         self.subreddit_list = subreddit_list
         self.reddit = self.__get_reddit_client__(cred_file)
-        self.producer = KafkaProducer(bootstrap_servers='localhost:9092',
+        self.producer = KafkaProducer(bootstrap_servers=['kafka:9092'],
                                       value_serializer=lambda x:
                                       dumps(x).encode('utf-8')
+                                      #security_protocol='SASL_PLAINTEXT',
+                                       # sasl_mechanism='PLAIN',
+                                        #sasl_plain_username='user1',
+                                        #sasl_plain_password='qi8eMBKUW5'
                                       )
         if self.producer is not None:
             print("Producer is inited successfully")
@@ -66,11 +70,22 @@ class RedditProducer:
                     "timestamp": comment.created_utc,
                     "permalink": comment.permalink,
                 }
-
-                self.producer.send("redditcomments", value=comment_json)
-                print(f"subreddit: {subreddit_name}, comment: {comment_json}")
+                future = self.producer.send("redditcomments", value=comment_json)
+                try:
+                    record_metadata = future.get(timeout=10)
+                    print(f'Message sent to partition {record_metadata.partition} at offset {record_metadata.offset}')
+                except KafkaError as e:
+                    print(f'Failed to send message: {e}')
+            
+                # Flush để đảm bảo message được gửi
+                self.producer.flush()
+            
+                print(f"Successfully processed - subreddit: {subreddit_name}, comment: {comment_json}")
             except Exception as e:
                 print("An error occurred:", str(e))
+                print("Error type:", type(e).__name__)
+                import traceback
+                print(traceback.format_exc())
 
     def start_streaming_threads(self):
         time.sleep(2)

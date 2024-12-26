@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cassandra-init-scripts
+data:
+  init.cql: |
+    CREATE ROLE IF NOT EXISTS tuanha 
+    WITH SUPERUSER = true 
+    AND LOGIN = true 
+    AND PASSWORD = 'tuanha';
+    
+    ALTER ROLE cassandra WITH SUPERUSER = false;

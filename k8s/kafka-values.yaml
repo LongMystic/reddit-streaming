@@ -1,0 +1,30 @@
+replicaCount: 3
+
+persistence:
+  enabled: true
+  size: 512Mi
+
+service:
+  type: NodePort
+  ports:
+    client: 9092
+    internal: 29092
+
+zookeeper:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 256Mi
+  service:
+    type: NodePort
+    ports:
+      client: 2181
+
+externalAccess:
+  enabled: true
+  service:
+    type: NodePort
+    nodePorts: [30092, 30093, 30094]
+
+kraft:
+  enabled: false

@@ -1,0 +1,60 @@
+image:
+  registry: docker.io
+  repository: bitnami/spark
+  tag: latest
+
+master:
+  command: 
+    - /bin/bash
+    - -c
+    - |
+      pip install pyspark nltk &&
+      python3 -m nltk.downloader -d /tmp/nltk_data vader_lexicon &&
+      /opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh
+  
+  containerSecurityContext:
+    enabled: false
+    runAsUser: 0
+    readOnlyRootFilesystem: false
+    runAsNonRoot: false
+  
+  extraEnvVars:
+    - name: NLTK_DATA
+      value: /tmp/nltk_data
+  
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+
+worker:
+  command:
+    - /bin/bash
+    - -c
+    - |
+      pip install pyspark nltk &&
+      python3 -m nltk.downloader -d /tmp/nltk_data vader_lexicon &&
+      /opt/bitnami/scripts/spark/entrypoint.sh /opt/bitnami/scripts/spark/run.sh
+
+  containerSecurityContext:
+    runAsNonRoot: false
+    enabled: false
+    runAsUser: 0
+    readOnlyRootFilesystem: false
+
+  extraEnvVars:
+    - name: NLTK_DATA
+      value: /tmp/nltk_data
+  
+  replicaCount: 3
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1"
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+configurationConfigMap: spark-configuration

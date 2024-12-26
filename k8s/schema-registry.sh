@@ -1,0 +1,11 @@
+helm install schema-registry bitnami/schema-registry \
+    --set kafka.enabled=false \
+    --set-json 'externalKafka.brokers=["PLAINTEXT://kafka-controller-0.kafka-controller-headless.default.svc.cluster.local:9092","PLAINTEXT://kafka-controller-1.kafka-controller-headless.default.svc.cluster.local:9092","PLAINTEXT://kafka-controller-2.kafka-controller-headless.default.svc.cluster.local:9092"]' \
+    --set replicaCount=1 \
+    --set service.type=NodePort \
+    --set service.ports.http=8081 \
+    --set resources.requests.cpu=200m \
+    --set resources.requests.memory=256Mi \
+    --set resources.limits.cpu=500m \
+    --set resources.limits.memory=512Mi \
+    --set heapOpts="-Xmx256m -Xms256m"

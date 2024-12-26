@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cassandra-config
+data:
+  cassandra.yaml: |
+    authenticator: PasswordAuthenticator
+    authorizer: AllowAllAuthorizer
+    role_manager: CassandraRoleManager
+    auth_read_consistency_level: LOCAL_ONE
+    auth_write_consistency_level: LOCAL_ONE

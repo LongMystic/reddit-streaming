@@ -1,0 +1,11 @@
+helm install cassandra bitnami/cassandra \
+    --set persistence.size=256Mi \
+    --set replicaCount=5 \
+    --set dbUser.user=cassandra \
+    --set dbUser.password=cassandra \
+    --set resources.requests.cpu=500m \
+    --set resources.requests.memory=512Mi \
+    --set resources.limits.cpu=1000m \
+    --set resources.limits.memory=1Gi \
+    --set heapSize=256m \
+    --set maxHeapSize=256m

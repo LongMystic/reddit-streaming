@@ -54,6 +54,7 @@ services:
       timeout: 5s
       retries: 5
 
+
   spark-master:
     container_name: spark-master
     image: bitnami/spark:latest
@@ -104,13 +105,27 @@ services:
     networks:
       - reddit-streaming
 
-#  grafana:
-#    image: grafana/grafana:9.5.2
-#    container_name: grafana
-#    ports:
-#      - "3000:3000"
-#    volumes:
-#      - ./grafana:/etc/grafana
-
+  grafana:
+    image: tuanha888/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/dashboard.json
+    networks:
+      - reddit-streaming
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: kafdrop
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: broker:29092
+      JVM_OPTS: "-Xms32M -Xmx64M"
+    depends_on:
+      - broker
+    networks:
+      - reddit-streaming
 networks:
   reddit-streaming:
